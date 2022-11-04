@@ -39,9 +39,7 @@ class TestSignUpView(TestCase):
             ).exists()
         )  # DBのレコードが追加されていて、入力データと同一
 
-        self.assertIn(
-            SESSION_KEY, self.client.session
-        )  # 仮想的なHTTPリクエストを送信して得た変数の中にユーザー名を... ?
+        self.assertIn(SESSION_KEY, self.client.session)  # 仮想的なHTTPリクエストを送信.変数... ?
 
     def test_failure_post_with_empty_form(self):
         empty_data = {
@@ -59,7 +57,8 @@ class TestSignUpView(TestCase):
             "username",
             "このフィールドは必須です。",
         )
-        # resに含まれるformset("form")の該当のform_index("username")(?)が持つfield(?)のエラーをerrors("このフィールドは必須です。")が含む(?)
+        # ?
+        # https://selfs-ryo.com/detail/django_test_1
 
         self.assertFormError(
             response,

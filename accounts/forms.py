@@ -1,9 +1,9 @@
-# from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
 from .models import User
 
-# User = get_user_model()
+# from django.contrib.auth import get_user_model
+# User = get_user_model() でも〇
 
 
 class SignUpForm(UserCreationForm):
