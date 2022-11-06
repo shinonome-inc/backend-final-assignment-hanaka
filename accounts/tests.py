@@ -1,10 +1,11 @@
+from django.conf import settings
 from django.contrib.auth import SESSION_KEY
 from django.test import TestCase
 from django.urls import reverse
 
-from mysite import settings
-
 from .models import User
+
+# print(settings.LOGIN_REDIRECT_URL)
 
 
 class TestSignUpView(TestCase):
@@ -39,7 +40,8 @@ class TestSignUpView(TestCase):
             ).exists()
         )  # DBのレコードが追加されていて、入力データと同一
 
-        self.assertIn(SESSION_KEY, self.client.session)  # 仮想的なHTTPリクエストを送信.変数... ?
+        self.assertIn(SESSION_KEY, self.client.session)
+        # ログイン後のサーバー上のsession_key＝ブラウザ上のkeyの確認(clientがテスト内でwebブラウザとして機能する)。
 
     def test_failure_post_with_empty_form(self):
         empty_data = {
@@ -57,7 +59,8 @@ class TestSignUpView(TestCase):
             "username",
             "このフィールドは必須です。",
         )
-        # ?
+        # self.assertFormsetError(formset, form_index, field, errors, msg_prefix='')
+        # field and errors have the same meaning as the parameters to assertFormError().
         # https://selfs-ryo.com/detail/django_test_1
 
         self.assertFormError(
@@ -78,7 +81,7 @@ class TestSignUpView(TestCase):
             "password2",
             "このフィールドは必須です。",
         )
-        self.assertFalse(User.objects.exists())  # データ格納だめ(?)
+        self.assertFalse(User.objects.exists())  # データ格納だめ
 
     def test_failure_post_with_empty_username(self):
         username_empty_data = {
@@ -161,7 +164,7 @@ class TestSignUpView(TestCase):
             "username",
             "同じユーザー名が既に登録済みです。",
         )
-        self.assertTrue(User.objects.count(), 1)  # ユーザー情報が1個だけになっていればOK(?)
+        self.assertTrue(User.objects.count(), 1)  # ユーザー情報が1個だけになっていれば◎
 
     def test_failure_post_with_invalid_email(self):
         invalid_email_data = {
