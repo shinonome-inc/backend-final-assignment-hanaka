@@ -3,8 +3,7 @@ from django.contrib.auth import SESSION_KEY
 from django.test import TestCase
 from django.urls import reverse
 
-from accounts.forms import SignUpForm
-
+from .forms import SignUpForm
 from .models import User
 
 # print(settings.LOGIN_REDIRECT_URL)
