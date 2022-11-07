@@ -55,41 +55,6 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
 
-    """
-        response = self.client.post(self.url, empty_data)
-        self.assertEquals(response.status_code, 200)
-        self.assertFormError(
-            response,
-            "form",
-            "username",
-            "このフィールドは必須です。",
-        )
-
-        # self.assertFormsetError(formset, form_index, field, errors, msg_prefix='')
-        # field and errors have the same meaning as the parameters to assertFormError().
-        # https://selfs-ryo.com/detail/django_test_1
-
-        self.assertFormError(
-            response,
-            "form",
-            "email",
-            "このフィールドは必須です。",
-        )
-        self.assertFormError(
-            response,
-            "form",
-            "password1",
-            "このフィールドは必須です。",
-        )
-        self.assertFormError(
-            response,
-            "form",
-            "password2",
-            "このフィールドは必須です。",
-        )
-        self.assertFalse(User.objects.exists())  # データ格納だめ
-    """
-
     def test_failure_post_with_empty_username(self):
         username_empty_data = {
             "username": "",
@@ -97,6 +62,7 @@ class TestSignUpView(TestCase):
             "password1": "testpassword",
             "password2": "testpassword",
         }
+
         response = self.client.post(self.url, data=username_empty_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
@@ -108,6 +74,7 @@ class TestSignUpView(TestCase):
             "password1": "testpassword",
             "password2": "testpassword",
         }
+
         response = self.client.post(self.url, data=email_empty_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
@@ -119,6 +86,7 @@ class TestSignUpView(TestCase):
             "password1": "",
             "password2": "",
         }
+
         response = self.client.post(self.url, data=password_empty_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
@@ -136,6 +104,7 @@ class TestSignUpView(TestCase):
             email="testemail@example.com",
             password="testpassword",
         )
+
         response = self.client.post(self.url, data=duplicated_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 1)
@@ -147,6 +116,7 @@ class TestSignUpView(TestCase):
             "password1": "testpassword",
             "password2": "testpassword",
         }
+
         response = self.client.post(self.url, data=invalid_email_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
@@ -158,6 +128,7 @@ class TestSignUpView(TestCase):
             "password1": "short",
             "password2": "short",
         }
+
         response = self.client.post(self.url, data=short_password_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
@@ -169,6 +140,7 @@ class TestSignUpView(TestCase):
             "password1": "testuserr",
             "password2": "testuserr",
         }
+
         response = self.client.post(self.url, data=password_similar_to_username_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
@@ -180,6 +152,7 @@ class TestSignUpView(TestCase):
             "password1": "84927274",
             "password2": "84927274",
         }
+
         response = self.client.post(self.url, data=only_numbers_password_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
@@ -191,6 +164,7 @@ class TestSignUpView(TestCase):
             "password1": "firstpassword",
             "password2": "secondpassword",
         }
+
         response = self.client.post(self.url, data=mismatch_password_data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
