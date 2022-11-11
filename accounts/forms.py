@@ -1,9 +1,10 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
 from .models import User
 
 # from django.contrib.auth import get_user_model
 # User = get_user_model() でも〇
+# ↑CustomUserモデル、DjangoデフォルトのUserモデルを問わず、使用しているUserモデル自体を返してくれる
 
 
 class SignUpForm(UserCreationForm):
@@ -12,3 +13,10 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ("username", "email")
+
+
+class LoginForm(AuthenticationForm):
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        for field in self.fields.values():
+            field.widget.attrs["placeholder"] = field.label
