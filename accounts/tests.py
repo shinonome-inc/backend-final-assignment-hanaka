@@ -16,7 +16,7 @@ class TestSignUpView(TestCase):
     def test_success_get(self):
         response = self.client.get(self.url)  # 仮想的なHTTPリクエストを送信し、レスポンスを受け取る
         self.assertEquals(response.status_code, 200)
-        self.assertTemplateUsed(response, "accounts/signup.html")  # templatesを指定しなくていい？
+        self.assertTemplateUsed(response, "accounts/signup.html")
 
     def test_success_post(self):
         user_data = {
