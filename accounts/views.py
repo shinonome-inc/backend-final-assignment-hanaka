@@ -18,15 +18,17 @@ class SignUpView(CreateView):
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password1")
         user = authenticate(username=username, password=password)
-        login(self.request, user)  # 認証
+        if user is not None:
+            print(user)
+            login(self.request, user)  # 認証
         return super().form_valid(form)  # リダイレクト
         # https://docs.djangoproject.com/ja/4.1/topics/auth/default/#authenticating-users
 
 
-class LoginView(LoginView):
+class UserLoginView(LoginView):
     form_class = LoginForm
     template_name = "accounts/login.html"
 
 
-class LogoutView(LoginRequiredMixin, LogoutView):
+class UserLogoutView(LoginRequiredMixin, LogoutView):
     template_name = "accounts/logout.html"
