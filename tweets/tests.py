@@ -9,7 +9,7 @@ class TestHomeView(TestCase):
         self.url = reverse("tweets:home")
         self.user = User.objects.create_user(
             username="testuser",
-            email="testemail@example.com",
+            # email="testemail@example.com",
             password="testpassword",
         )
         self.client.login(username="testuser", password="testpassword")
