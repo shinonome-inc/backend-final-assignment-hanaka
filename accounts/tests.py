@@ -236,13 +236,13 @@ class TestLoginView(TestCase):
         }
         response = self.client.post(self.url, data)
         self.assertRedirects(
-            response,
-            reverse(settings.LOGIN_REDIRECT_URL),
-            status_code=302,
-            target_status_code=200,  # ?
-        )
-        print(SESSION_KEY)
-        print(self.client.session)
+            response,  # GET/POSTしたレスポンス
+            reverse(settings.LOGIN_REDIRECT_URL),  # 最終的にリダイレクトされるURL
+            status_code=302,  # はじめに返ってくるHTTPのレスポンスコード
+            target_status_code=200,  # 最終的に返ってくるHTTPのレスポンスコード
+        )  # https://qiita.com/kozakura16/items/c08b8cb8da12ace78658
+        # print(SESSION_KEY) ◎
+        # print(self.client.session) ◎
 
         self.assertIn(SESSION_KEY, self.client.session)
 
@@ -257,12 +257,8 @@ class TestLoginView(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn(
             "正しいユーザー名とパスワードを入力してください。どちらのフィールドも大文字と小文字は区別されます。",
-            form.errors["__all__"],
+            form.errors["__all__"],  # ?
         )
-        # self.assertEqual(
-        #    form.errors["password"],
-        #    ["正しいユーザー名とパスワードを入力してください。どちらのフィールドも大文字と小文字は区別されます。"],
-        # )
         self.assertNotIn(SESSION_KEY, self.client.session)
 
     def test_failure_post_with_empty_password(self):
@@ -278,16 +274,12 @@ class TestLoginView(TestCase):
             "このフィールドは必須です。",
             form.errors["password"],
         )
-        # self.assertEqual(
-        #    form.errors["password"],
-        #    ["このフィールドは必須です。"],
-        # )
         self.assertNotIn(SESSION_KEY, self.client.session)
 
 
 class TestLogoutView(TestCase):
     def setUp(self):
-        self.url = User.objects.create_user(
+        self.usr = User.objects.create_user(
             username="testuser",
             password="password",
         )
