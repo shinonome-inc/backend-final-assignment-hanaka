@@ -226,7 +226,7 @@ class TestLoginView(TestCase):
 
     def test_success_get(self):
         response = self.client.get(self.url)
-        self.assertEquals(response.status_code, 200)
+        self.assertIs(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/login.html")
 
     def test_success_post(self):
@@ -252,12 +252,12 @@ class TestLoginView(TestCase):
             "password": "fakepassward",
         }
         response = self.client.post(self.url, not_exist_user_data)
-        self.assertEquals(response.status_code, 200)
+        self.assertIs(response.status_code, 200)
         form = LoginForm(data=not_exist_user_data)
-        self.assertFalse(form.is_valid())
+        self.assertIsNot(self, form.is_valid())
         self.assertIn(
             "正しいユーザー名とパスワードを入力してください。どちらのフィールドも大文字と小文字は区別されます。",
-            form.errors["__all__"],  # ?
+            form.errors["__all__"],
         )
         self.assertNotIn(SESSION_KEY, self.client.session)
 
@@ -267,9 +267,9 @@ class TestLoginView(TestCase):
             "password": "",
         }
         response = self.client.post(self.url, empty_data)
-        self.assertEquals(response.status_code, 200)
+        self.assertIs(response.status_code, 200)
         form = LoginForm(data=empty_data)
-        self.assertFalse(form.is_valid())
+        self.assertIsNot(self, form.is_valid())
         self.assertIn(
             "このフィールドは必須です。",
             form.errors["password"],
