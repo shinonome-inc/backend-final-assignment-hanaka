@@ -14,8 +14,7 @@ class SignUpView(CreateView):
     # reverse(app名:urls.pyで設定した名前)
 
     def form_valid(self, form):
-        response = super().form_valid(form)  # ?
-        form.save()  # formの情報を保存
+        response = super().form_valid(form)
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password1")
         user = authenticate(self.request, username=username, password=password)
@@ -25,11 +24,18 @@ class SignUpView(CreateView):
         return response  # リダイレクト
         # https://docs.djangoproject.com/ja/4.1/topics/auth/default/#authenticating-users
 
+    """
+    ↓実際のコード引用
+    def form_valid(self, form):
+    ""If the form is valid, save the associated model.""
+    self.object = form.save()  # formの情報を保存
+    return super().form_valid(form)
+    """
+
 
 class UserLoginView(LoginView):
     form_class = LoginForm
     template_name = "accounts/login.html"
-    success_url = reverse_lazy("tweets:home")
 
 
 class UserLogoutView(LoginRequiredMixin, LogoutView):
