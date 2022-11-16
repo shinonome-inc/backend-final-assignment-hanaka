@@ -56,10 +56,10 @@ class TestSignUpView(TestCase):
 
         form = SignUpForm(empty_data)
         self.assertFalse(form.is_valid())
-        self.assertIn("このフィールドは必須です。", form.errors["username"][0])
-        self.assertIn("このフィールドは必須です。", form.errors["email"][0])
-        self.assertIn("このフィールドは必須です。", form.errors["password1"][0])
-        self.assertIn("このフィールドは必須です。", form.errors["password2"][0])
+        self.assertEqual(form.errors["username"][0], "このフィールドは必須です。")
+        self.assertEqual(form.errors["email"][0], "このフィールドは必須です。")
+        self.assertEqual(form.errors["password1"][0], "このフィールドは必須です。")
+        self.assertEqual(form.errors["password2"][0], "このフィールドは必須です。")
         # assertIs(form.errors["username"][0],"このフィールドは必須です。")だと通らなかった
         """
          ↑↑↑
@@ -82,7 +82,7 @@ class TestSignUpView(TestCase):
 
         form = SignUpForm(username_empty_data)
         self.assertFalse(form.is_valid())
-        self.assertIn("このフィールドは必須です。", form.errors["username"][0])
+        self.assertEqual(form.errors["username"][0], "このフィールドは必須です。")
 
     def test_failure_post_with_empty_email(self):
         email_empty_data = {
@@ -98,7 +98,7 @@ class TestSignUpView(TestCase):
 
         form = SignUpForm(email_empty_data)
         self.assertFalse(form.is_valid())
-        self.assertIn("このフィールドは必須です。", form.errors["email"][0])
+        self.assertEqual(form.errors["email"][0], "このフィールドは必須です。")
 
     def test_failure_post_with_empty_password(self):
         password_empty_data = {
@@ -114,8 +114,8 @@ class TestSignUpView(TestCase):
 
         form = SignUpForm(password_empty_data)
         self.assertFalse(form.is_valid())
-        self.assertIn("このフィールドは必須です。", form.errors["password1"][0])
-        self.assertIn("このフィールドは必須です。", form.errors["password2"][0])
+        self.assertEqual(form.errors["password1"][0], "このフィールドは必須です。")
+        self.assertEqual(form.errors["password2"][0], "このフィールドは必須です。")
 
     def test_failure_post_with_duplicated_user(self):
         duplicated_data = {
@@ -216,7 +216,7 @@ class TestSignUpView(TestCase):
         self.assertEqual(User.objects.all().count(), 0)
 
         form = SignUpForm(mismatch_password_data)
-        self.assertFalse(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn("確認用パスワードが一致しません。", form.errors["password2"])
 
 
@@ -272,7 +272,7 @@ class TestLoginView(TestCase):
         response = self.client.post(self.url, empty_data)
         self.assertEqual(response.status_code, 200)
         form = LoginForm(data=empty_data)
-        self.assertFalse(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn(
             "このフィールドは必須です。",
             form.errors["password"],
