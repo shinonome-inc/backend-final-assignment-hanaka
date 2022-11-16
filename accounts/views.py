@@ -18,8 +18,6 @@ class SignUpView(CreateView):
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password1")
         user = authenticate(self.request, username=username, password=password)
-        # if user is not None:
-        #    print(user) ◎
         login(self.request, user)  # 認証
         return response  # リダイレクト
         # https://docs.djangoproject.com/ja/4.1/topics/auth/default/#authenticating-users

@@ -9,7 +9,6 @@ class TestHomeView(TestCase):
         self.url = reverse("tweets:home")
         self.user = User.objects.create_user(
             username="testuser",
-            # email="testemail@example.com",
             password="testpassword",
         )
         self.client.login(username="testuser", password="testpassword")
@@ -20,21 +19,7 @@ class TestHomeView(TestCase):
         self.assertTemplateUsed(response, "tweets/home.html")
 
 
-# class TestHomeView(TestCase):
-#     def setUp(self):
-#         # self.url = reverse("tweets:home")  # urls.pyの(app_name:name)
-#         self.user = {
-#             "username": "testuser",
-#             "email": "test@example.com",
-#             "password1": "testpassword",
-#             "password2": "testpassword",
-#         }
-#         self.client.post(reverse("accounts:signup"), self.user)
-
-#     def test_success_get(self):
-#         response = self.client.get(reverse("tweets:home"))
-#         self.assertIs(response.status_code, 200)
-#         self.assertTemplateUsed(response, "tweets/home.html")
+#       self.client.post(reverse("accounts:signup"), self.user)にする手もある。
 
 
 class TestTweetCreateView(TestCase):

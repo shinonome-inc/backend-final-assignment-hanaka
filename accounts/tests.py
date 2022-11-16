@@ -6,8 +6,6 @@ from django.urls import reverse
 from .forms import LoginForm, SignUpForm
 from .models import User
 
-# print(settings.LOGIN_REDIRECT_URL) ◎
-
 
 class TestSignUpView(TestCase):
     def setUp(self):
@@ -15,7 +13,7 @@ class TestSignUpView(TestCase):
 
     def test_success_get(self):
         response = self.client.get(self.url)  # 仮想的なHTTPリクエストを送信し、レスポンスを受け取る
-        self.assertIs(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/signup.html")
 
     def test_success_post(self):
@@ -53,16 +51,22 @@ class TestSignUpView(TestCase):
         }
 
         response = self.client.post(self.url, data=empty_data)
-        self.assertIs(response.status_code, 200)
-        self.assertIs(User.objects.all().count(), 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.all().count(), 0)
 
         form = SignUpForm(empty_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn("このフィールドは必須です。", form.errors["username"][0])
         self.assertIn("このフィールドは必須です。", form.errors["email"][0])
         self.assertIn("このフィールドは必須です。", form.errors["password1"][0])
         self.assertIn("このフィールドは必須です。", form.errors["password2"][0])
-        # assertIs(form.errors["username"][0],"このフィールドは必須です。")だと通らなかった(タイプが違うから？)
+        # assertIs(form.errors["username"][0],"このフィールドは必須です。")だと通らなかった
+        """
+         ↑↑↑
+         print(id(form.errors["username"][0]))
+         print(id("このフィールドは必須です。"))
+        ここふたつ発行されているidが違う➤全く同じオブジェクトではない➤Isだと通らない
+        """
 
     def test_failure_post_with_empty_username(self):
         username_empty_data = {
@@ -73,11 +77,11 @@ class TestSignUpView(TestCase):
         }
 
         response = self.client.post(self.url, data=username_empty_data)
-        self.assertIs(response.status_code, 200)
-        self.assertIs(User.objects.all().count(), 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.all().count(), 0)
 
         form = SignUpForm(username_empty_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn("このフィールドは必須です。", form.errors["username"][0])
 
     def test_failure_post_with_empty_email(self):
@@ -89,11 +93,11 @@ class TestSignUpView(TestCase):
         }
 
         response = self.client.post(self.url, data=email_empty_data)
-        self.assertIs(response.status_code, 200)
-        self.assertIs(User.objects.all().count(), 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.all().count(), 0)
 
         form = SignUpForm(email_empty_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn("このフィールドは必須です。", form.errors["email"][0])
 
     def test_failure_post_with_empty_password(self):
@@ -105,11 +109,11 @@ class TestSignUpView(TestCase):
         }
 
         response = self.client.post(self.url, data=password_empty_data)
-        self.assertIs(response.status_code, 200)
-        self.assertIs(User.objects.all().count(), 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.all().count(), 0)
 
         form = SignUpForm(password_empty_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn("このフィールドは必須です。", form.errors["password1"][0])
         self.assertIn("このフィールドは必須です。", form.errors["password2"][0])
 
@@ -128,11 +132,11 @@ class TestSignUpView(TestCase):
         )
 
         response = self.client.post(self.url, data=duplicated_data)
-        self.assertIs(response.status_code, 200)
-        self.assertIs(User.objects.all().count(), 1)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.all().count(), 1)
 
         form = SignUpForm(duplicated_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn("同じユーザー名が既に登録済みです。", form.errors["username"])
 
     def test_failure_post_with_invalid_email(self):
@@ -144,11 +148,11 @@ class TestSignUpView(TestCase):
         }
 
         response = self.client.post(self.url, data=invalid_email_data)
-        self.assertIs(response.status_code, 200)
-        self.assertIs(User.objects.all().count(), 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.all().count(), 0)
 
         form = SignUpForm(invalid_email_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn("有効なメールアドレスを入力してください。", form.errors["email"])
 
     def test_failure_post_with_too_short_password(self):
@@ -160,11 +164,11 @@ class TestSignUpView(TestCase):
         }
 
         response = self.client.post(self.url, data=short_password_data)
-        self.assertIs(response.status_code, 200)
-        self.assertIs(User.objects.all().count(), 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.all().count(), 0)
 
         form = SignUpForm(short_password_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn("このパスワードは短すぎます。最低 8 文字以上必要です。", form.errors["password2"])
 
     def test_failure_post_with_password_similar_to_username(self):
@@ -176,11 +180,11 @@ class TestSignUpView(TestCase):
         }
 
         response = self.client.post(self.url, data=password_similar_to_username_data)
-        self.assertIs(response.status_code, 200)
-        self.assertIs(User.objects.all().count(), 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.all().count(), 0)
 
         form = SignUpForm(password_similar_to_username_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn(form.errors["password2"][0], "このパスワードは ユーザー名 と似すぎています。")
 
     def test_failure_post_with_only_numbers_password(self):
@@ -192,11 +196,11 @@ class TestSignUpView(TestCase):
         }
 
         response = self.client.post(self.url, data=only_numbers_password_data)
-        self.assertIs(response.status_code, 200)
-        self.assertIs(User.objects.all().count(), 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.all().count(), 0)
 
         form = SignUpForm(only_numbers_password_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn("このパスワードは数字しか使われていません。", form.errors["password2"])
 
     def test_failure_post_with_mismatch_password(self):
@@ -208,11 +212,11 @@ class TestSignUpView(TestCase):
         }
 
         response = self.client.post(self.url, data=mismatch_password_data)
-        self.assertIs(response.status_code, 200)
-        self.assertIs(User.objects.all().count(), 0)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(User.objects.all().count(), 0)
 
         form = SignUpForm(mismatch_password_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(self, form.is_valid())
         self.assertIn("確認用パスワードが一致しません。", form.errors["password2"])
 
 
@@ -227,7 +231,7 @@ class TestLoginView(TestCase):
 
     def test_success_get(self):
         response = self.client.get(self.url)
-        self.assertIs(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "accounts/login.html")
 
     def test_success_post(self):
@@ -242,8 +246,6 @@ class TestLoginView(TestCase):
             status_code=302,  # はじめに返ってくるHTTPのレスポンスコード
             target_status_code=200,  # 最終的に返ってくるHTTPのレスポンスコード
         )  # https://qiita.com/kozakura16/items/c08b8cb8da12ace78658
-        # print(SESSION_KEY) ◎
-        # print(self.client.session) ◎
 
         self.assertIn(SESSION_KEY, self.client.session)
 
@@ -253,9 +255,9 @@ class TestLoginView(TestCase):
             "password": "fakepassward",
         }
         response = self.client.post(self.url, not_exist_user_data)
-        self.assertIs(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         form = LoginForm(data=not_exist_user_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(form.is_valid())
         self.assertIn(
             "正しいユーザー名とパスワードを入力してください。どちらのフィールドも大文字と小文字は区別されます。",
             form.errors["__all__"],
@@ -268,9 +270,9 @@ class TestLoginView(TestCase):
             "password": "",
         }
         response = self.client.post(self.url, empty_data)
-        self.assertIs(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         form = LoginForm(data=empty_data)
-        self.assertIsNot(self, form.is_valid())
+        self.assertFalse(self, form.is_valid())
         self.assertIn(
             "このフィールドは必須です。",
             form.errors["password"],
