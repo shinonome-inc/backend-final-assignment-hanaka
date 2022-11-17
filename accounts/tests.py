@@ -81,12 +81,12 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
 
-        # form = SignUpForm(username_empty_data)
-
         context = response.context
         form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["username"][0], "このフィールドは必須です。")
+        # formの引用元　×SignUpForm(username_empty_data)
+        # https://codor.co.jp/django/about-context
 
     def test_failure_post_with_empty_email(self):
         email_empty_data = {
