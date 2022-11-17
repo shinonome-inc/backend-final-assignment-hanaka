@@ -1,8 +1,10 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin  # , UserPassesTestMixin
+from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 
-from .forms import SignUpForm
+from .forms import LoginForm, SignUpForm
 
 
 class SignUpView(CreateView):
@@ -12,9 +14,27 @@ class SignUpView(CreateView):
     # reverse(app名:urls.pyで設定した名前)
 
     def form_valid(self, form):
-        form.save()  # formの情報を保存
+        response = super().form_valid(form)
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password1")
-        user = authenticate(username=username, password=password)
+        user = authenticate(self.request, username=username, password=password)
         login(self.request, user)  # 認証
-        return super().form_valid(form)  # リダイレクト
+        return response  # リダイレクト
+        # https://docs.djangoproject.com/ja/4.1/topics/auth/default/#authenticating-users
+
+    """
+    ↓実際のコード引用
+    def form_valid(self, form):
+    ""If the form is valid, save the associated model.""
+    self.object = form.save()  # formの情報を保存
+    return super().form_valid(form)
+    """
+
+
+class UserLoginView(LoginView):
+    form_class = LoginForm
+    template_name = "accounts/login.html"
+
+
+class UserLogoutView(LoginRequiredMixin, LogoutView):
+    template_name = "accounts/logout.html"

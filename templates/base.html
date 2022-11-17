@@ -15,7 +15,31 @@
 </head>
 
 <body>
-    {% block content %}{% endblock %}
+    <div>
+        <h1>
+            {% block header %}
+            {% endblock header %}
+        </h1>
+
+        <nav class="navbar navbar-expand-lg navbar-right bg-right">
+            <form class="container-fluid justify-content-start">
+                <!-- <div class=”container(container-fluid)”> -->
+                {% if request.user.is_authenticated %}
+                <p class="nav-link"><a href="{% url 'accounts:logout' %}"><button type="button"
+                            class="btn btn-outline-primary">ログアウト</button></a></p>
+                {% else %}
+                <p class="nav-link"><a href="{% url 'accounts:login' %}"><button type="button"
+                            class="btn btn-outline-primary">ログイン</button></a></p>
+                <p class="nav-link"><a href="{% url 'accounts:signup' %}"><button type="button"
+                            class="btn btn-primary">登録</button></a></p>
+                {% endif %}
+                <!-- </div> -->
+            </form>
+        </nav>
+        {% block content %}
+        {% endblock content %}
+
+    </div>
 </body>
 
 </html>

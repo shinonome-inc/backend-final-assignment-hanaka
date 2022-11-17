@@ -1,15 +1,25 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from accounts.models import User
+
 
 class TestHomeView(TestCase):
     def setUp(self):
-        self.url = reverse("tweets:home")  # urls.pyの(app_name:name)
+        self.url = reverse("tweets:home")
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpassword",
+        )
+        self.client.login(username="testuser", password="testpassword")
 
     def test_success_get(self):
         response = self.client.get(self.url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "tweets/home.html")
+
+
+#       self.client.post(reverse("accounts:signup"), self.user)にする手もある。
 
 
 class TestTweetCreateView(TestCase):
