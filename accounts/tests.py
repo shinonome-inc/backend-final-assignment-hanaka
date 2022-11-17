@@ -3,7 +3,7 @@ from django.contrib.auth import SESSION_KEY
 from django.test import TestCase
 from django.urls import reverse
 
-from .forms import LoginForm, SignUpForm
+# from .forms import LoginForm, SignUpForm
 from .models import User
 
 
@@ -54,7 +54,8 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
 
-        form = SignUpForm(empty_data)
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["username"][0], "このフィールドは必須です。")
         self.assertEqual(form.errors["email"][0], "このフィールドは必須です。")
@@ -80,7 +81,10 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
 
-        form = SignUpForm(username_empty_data)
+        # form = SignUpForm(username_empty_data)
+
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["username"][0], "このフィールドは必須です。")
 
@@ -96,7 +100,8 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
 
-        form = SignUpForm(email_empty_data)
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["email"][0], "このフィールドは必須です。")
 
@@ -112,7 +117,8 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
 
-        form = SignUpForm(password_empty_data)
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["password1"][0], "このフィールドは必須です。")
         self.assertEqual(form.errors["password2"][0], "このフィールドは必須です。")
@@ -135,7 +141,8 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 1)
 
-        form = SignUpForm(duplicated_data)
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["username"][0], "同じユーザー名が既に登録済みです。")
 
@@ -151,7 +158,8 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
 
-        form = SignUpForm(invalid_email_data)
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["email"][0], "有効なメールアドレスを入力してください。")
 
@@ -167,7 +175,8 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
 
-        form = SignUpForm(short_password_data)
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["password2"][0], "このパスワードは短すぎます。最低 8 文字以上必要です。")
 
@@ -183,7 +192,8 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
 
-        form = SignUpForm(password_similar_to_username_data)
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["password2"][0], "このパスワードは ユーザー名 と似すぎています。")
 
@@ -199,7 +209,8 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
 
-        form = SignUpForm(only_numbers_password_data)
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["password2"][0], "このパスワードは数字しか使われていません。")
 
@@ -215,7 +226,8 @@ class TestSignUpView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(User.objects.all().count(), 0)
 
-        form = SignUpForm(mismatch_password_data)
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["password2"][0], "確認用パスワードが一致しません。")
 
@@ -256,7 +268,8 @@ class TestLoginView(TestCase):
         }
         response = self.client.post(self.url, not_exist_user_data)
         self.assertEqual(response.status_code, 200)
-        form = LoginForm(data=not_exist_user_data)
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(
             form.errors["__all__"][0],
@@ -271,7 +284,8 @@ class TestLoginView(TestCase):
         }
         response = self.client.post(self.url, empty_data)
         self.assertEqual(response.status_code, 200)
-        form = LoginForm(data=empty_data)
+        context = response.context
+        form = context["form"]
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors["password"][0], "このフィールドは必須です。")
         self.assertNotIn(SESSION_KEY, self.client.session)
