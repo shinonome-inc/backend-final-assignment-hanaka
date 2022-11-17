@@ -3,7 +3,6 @@ from django.contrib.auth import SESSION_KEY
 from django.test import TestCase
 from django.urls import reverse
 
-# from .forms import LoginForm, SignUpForm
 from .models import User
 
 

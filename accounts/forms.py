@@ -8,8 +8,6 @@ from .models import User
 
 
 class SignUpForm(UserCreationForm):
-    # User._meta.get_field("email").required = True
-
     class Meta:
         model = User
         fields = (
