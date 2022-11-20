@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}ツイート削除{% endblock %}
+
+{% block content %}
+<form action="" method="POST">
+    {% csrf_token %}
+
+    <ul>
+        <li>{{ tweet.user }}</li>
+        <li>{{ tweet.content }}</li>
+        <l1>{{ tweet.created_at }}</li>
+    </ul>
+    <a href="{% url 'tweets:detail' tweet.pk %}" class="btn btn-outline-primary">戻る</a>
+    <button type="submit" class="btn btn-primary">削除</button>
+</form>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %} プロフィール {% endblock %}
+{% block content %}
+<h2>プロフィール</h2>
+<div class="card" style="width:80%;">
+    <div class="card-header">
+        {{ user.username }}
+    </div>
+    <div class="card-body">
+        フォロー/フォロワー等表示
+    </div>
+    <div class="card-footer text-muted">
+    </div>
+</div>
+
+{% for tweet in tweets %}
+<div class="card" style="width:80%;">
+    <div class="card-header">
+        {{ tweet.user }}
+    </div>
+    <div class="card-body">
+        <p class="card-text"> {{ tweet.content }} </p>
+        <a href="{{ tweet.get_absolute_url }}"><button type="button" class="btn btn-outline-primary">詳細</button></a>
+    </div>
+    <div class="card-footer text-muted">
+        {{ tweet.created_at }}
+    </div>
+</div>
+{% endfor %}
+
+{% endblock content %}
