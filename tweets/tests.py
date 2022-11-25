@@ -53,7 +53,7 @@ class TestTweetCreateView(TestCase):
             response,
             reverse("tweets:home"),
             status_code=302,
-            target_status_code=200,  # 最終的に出したいコード、いる？
+            target_status_code=200,
         )
         self.assertEqual(Tweet.objects.count(), 1)  # いるのかな
         self.assertTrue(Tweet.objects.filter(content=test_post["content"]).exists())
