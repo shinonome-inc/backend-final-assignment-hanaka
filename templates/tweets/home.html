@@ -6,9 +6,9 @@
 <div>
     <h2> ホーム </h2>
 
-    {% for tweet in tweets %}
+    {% for tweet in tweet_list %}
     <div class="card" style="width:80%;">
-        <!-- ブロックを中央揃えにしたいけどできない…。-->
+        <!-- ブロックを中央揃えにしたいけどできない...。-->
         <div class="card-header">
             <a href="{% url 'accounts:user_profile' tweet.user %}">
                 {{ tweet.user }}

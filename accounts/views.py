@@ -57,9 +57,10 @@ class UserProfileView(LoginRequiredMixin, DetailView):
         # Insert the single object into the context dict.
         context = super().get_context_data(**kwargs)
         # 既存のコンテキストデータを取得
-        context["tweets"] = (
+        user = self.object
+        context["tweet_list"] = (
             Tweet.objects.select_related("user")
-            .filter(user=self.request.user)
+            .filter(user=user)  # (modelsで指定したuser = 3行前で定義したuser)
             .order_by("-created_at")
         )
         # 追加したい情報

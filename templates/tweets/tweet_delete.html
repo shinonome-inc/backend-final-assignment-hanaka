@@ -5,13 +5,12 @@
 {% block content %}
 <form action="" method="POST">
     {% csrf_token %}
-
     <ul>
-        <li>{{ tweet.user }}</li>
-        <li>{{ tweet.content }}</li>
-        <l1>{{ tweet.created_at }}</li>
+        <li>{{ tweet_delete.user }}</li>
+        <li>{{ tweet_delete.content }}</li>
+        <l1>{{ tweet_delete.created_at }}</li>
     </ul>
-    <a href="{% url 'tweets:detail' tweet.pk %}" class="btn btn-outline-primary">戻る</a>
+    <a href="{% url 'tweets:detail' tweet_delete.pk %}" class="btn btn-outline-primary">戻る</a>
     <button type="submit" class="btn btn-primary">削除</button>
 </form>
 {% endblock %}

@@ -10,8 +10,9 @@ from .models import Tweet
 class HomeView(LoginRequiredMixin, ListView):
     model = Tweet
     template_name = "tweets/home.html"
-    context_object_name = "tweets"
+    context_object_name = "tweet_list"
     # テンプレートで表示する際のモデルの参照名を設定
+    # → どこから持ってきたデータか分かり易くなった気がする
 
     def get_queryset(self):
         return Tweet.objects.select_related("user").order_by("-created_at")
@@ -31,6 +32,7 @@ class TweetCreateView(LoginRequiredMixin, CreateView):
 
 class TweetDetailView(LoginRequiredMixin, DetailView):
     model = Tweet
+    context_object_name = "tweet_detail"
     template_name = "tweets/tweet_detail.html"
 
 
@@ -38,6 +40,7 @@ class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Tweet
     template_name = "tweets/tweet_delete.html"
     success_url = reverse_lazy("tweets:home")
+    context_object_name = "tweet_delete"
 
     def test_func(self):
         tweet = self.get_object()
