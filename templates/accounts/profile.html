@@ -4,7 +4,7 @@
 {% block content %}
 <h2>プロフィール</h2>
 <!-- 前のページ(=home)に遷移する -->
-<p class="nav-link"><a href="{{request.META.HTTP_REFERER}}"><button type="button"
+<p class="nav-link"><a href="{% url 'tweets:home' %}"><button type="button"
             class="btn btn-outline-primary">戻る</button></a></p>
 <div class="card" style="width:80%;">
     <div class="card-header">
