@@ -6,6 +6,9 @@
 <div>
     <h2> ホーム </h2>
 
+    <p class="nav-link"><a href="{% url 'tweets:create' %}"><button type="button"
+                class="btn btn-primary">新規作成</button></a></p>
+
     {% for tweet in tweet_list %}
     <div class="card" style="width:80%;">
         <!-- ブロックを中央揃えにしたいけどできない...。-->

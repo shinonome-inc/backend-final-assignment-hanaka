@@ -79,6 +79,7 @@ class TestTweetCreateView(TestCase):
         }
         response = self.client.post(self.url, too_long_content_data)
         context = response.context
+        print(type(context))
         form = context["form"]
         self.assertEqual(response.status_code, 200)
         self.assertEqual(

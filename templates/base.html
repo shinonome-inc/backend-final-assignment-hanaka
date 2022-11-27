@@ -25,8 +25,11 @@
                 {% if request.user.is_authenticated %}
                 <p class="nav-link"><a href="{% url 'accounts:logout' %}"><button type="button"
                             class="btn btn-outline-primary">ログアウト</button></a></p>
-                <p class="nav-link"><a href="{% url 'tweets:create' %}"><button type="button"
-                            class="btn btn-primary">新規作成</button></a></p>
+                <p class="nav-link"><a href="{% url 'accounts:user_profile' request.user %}"><button type="button"
+                            class="btn btn-outline-primary">プロフィール</button></a></p>
+                <p class="nav-link"><a href="{% url 'tweets:home' %}"><button type="button"
+                            class="btn btn-outline-primary">ホーム</button></a></p>
+
                 {% else %}
                 <p class="nav-link"><a href="{% url 'accounts:login' %}"><button type="button"
                             class="btn btn-outline-primary">ログイン</button></a></p>

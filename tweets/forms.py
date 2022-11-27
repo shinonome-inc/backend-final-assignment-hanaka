@@ -8,10 +8,6 @@ class CreateTweetForm(forms.ModelForm):
         model = Tweet
         fields = ("content",)
 
-        widget = forms.Textarea(
-            attrs={
-                "rows": 4,
-                "cols": 35,
-                "placeholder": "いまどうしてる？",
-            }
-        )
+    content = forms.CharField(
+        widget=forms.Textarea(attrs={"placeholder": "いまどうしてる？"}),
+    )
