@@ -4,13 +4,10 @@
 
 {% block content %}
 
-<!-- unordered list -->
 <ul>
-    <!-- list item -->
     <li>{{ tweet_detail.user }}</li>
     <li>{{ tweet_detail.content }}</li>
     <l1>{{ tweet_detail.created_at }}</li>
-
 </ul>
 
 <a href="{% url 'tweets:home' %}" class="btn btn-outline-primary">戻る</a>

@@ -327,7 +327,7 @@ class TestUserProfileView(TestCase):
         response = self.client.get(self.url)
         context = response.context
         self.assertQuerysetEqual(
-            context["tweet_list"], Tweet.objects.filter(user=self.user), ordered=False
+            context["tweet_list"], Tweet.objects.filter(user=self.user)
         )
         # usernameを元に情報を取ってきている
 

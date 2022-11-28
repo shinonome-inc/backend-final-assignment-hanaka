@@ -3,7 +3,7 @@
 {% block title %}ツイート削除{% endblock %}
 
 {% block content %}
-<form action="" method="POST">
+<form method="POST">
     {% csrf_token %}
     <ul>
         <li>{{ tweet_delete.user }}</li>

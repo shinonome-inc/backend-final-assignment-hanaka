@@ -55,7 +55,6 @@ class TestTweetCreateView(TestCase):
             status_code=302,
             target_status_code=200,
         )
-        self.assertEqual(Tweet.objects.count(), 1)  # いるのかな
         self.assertTrue(Tweet.objects.filter(content=test_post["content"]).exists())
 
     def test_failure_post_with_empty_content(self):
@@ -149,7 +148,6 @@ class TestTweetDeleteView(TestCase):
         self.url = reverse("tweets:delete", kwargs={"pk": self.post2.pk})
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, 403)
-        # エラーメッセージの確認入れる?
         self.assertEqual(Tweet.objects.count(), 2)
 
 
