@@ -81,7 +81,6 @@ class TestTweetCreateView(TestCase):
         response = self.client.post(self.url, too_long_content_data)
         context = response.context
         self.assertEqual(response.status_code, 200)
-        print(context["form"].errors["content"])
         self.assertIn(
             "この値は 140 文字以下でなければなりません( 183 文字になっています)。",
             context["form"].errors["content"],
