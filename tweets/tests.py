@@ -67,10 +67,12 @@ class TestTweetCreateView(TestCase):
         context = response.context
         form = context["form"]
         self.assertEqual(Tweet.objects.count(), 0)
-        self.assertEqual(
-            form.errors["content"][0],
+        self.assertIn(
             "このフィールドは必須です。",
+            form.errors["content"],
         )
+        # str in list → リスト内に、文字列に完全に一致したものがあるかを確認してくれるので◎
+        # str in str → 文字列同士での部分一致の確認になってしまうので今回の場合は不適切。
 
     def test_failure_post_with_too_long_content(self):
         too_long_content_data = {
@@ -79,9 +81,10 @@ class TestTweetCreateView(TestCase):
         response = self.client.post(self.url, too_long_content_data)
         context = response.context
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            context["form"].errors["content"][0],
+        print(context["form"].errors["content"])
+        self.assertIn(
             "この値は 140 文字以下でなければなりません( 183 文字になっています)。",
+            context["form"].errors["content"],
         )
         self.assertEqual(Tweet.objects.count(), 0)
 
@@ -133,9 +136,9 @@ class TestTweetDeleteView(TestCase):
         self.url = reverse("tweets:delete", kwargs={"pk": 10})
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(
-            response.context["exception"],
+        self.assertIn(
             "クエリーに一致する tweet は見つかりませんでした",
+            response.context["exception"],
         )
         self.assertEqual(Tweet.objects.count(), 1)
 
