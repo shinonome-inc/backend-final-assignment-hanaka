@@ -4,6 +4,37 @@
 
 {% block content %}
 <div>
-    <h2> Home </h2>
+    <h2> ホーム </h2>
+
+    <p class="nav-link"><a href="{% url 'tweets:create' %}"><button type="button"
+                class="btn btn-primary">新規作成</button></a></p>
+
+    <div class="row  justify-content-center">
+        {% for tweet in tweet_list %}
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <a href="{% url 'accounts:user_profile' tweet.user %}">
+                        {{ tweet.user }}
+                    </a>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        {{ tweet.content }}
+                    </p>
+                    <a href="{{ tweet.get_absolute_url }}">
+                        <button type="button" class="btn btn-outline-primary">
+                            詳細
+                        </button>
+                    </a>
+                </div>
+                <div class="card-footer text-muted">
+                    {{ tweet.created_at }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
 </div>
 {% endblock %}

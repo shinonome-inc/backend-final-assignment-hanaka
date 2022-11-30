@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}ツイート詳細{% endblock %}
+
+{% block content %}
+
+<ul>
+    <li>{{ tweet_detail.user }}</li>
+    <li>{{ tweet_detail.content }}</li>
+    <l1>{{ tweet_detail.created_at }}</li>
+</ul>
+
+<a href="{% url 'tweets:home' %}" class="btn btn-outline-primary">戻る</a>
+{% if request.user == tweet_detail.user %}
+<a href="{% url 'tweets:delete' tweet_detail.pk %}" class="btn btn-outline-primary">削除する</a>
+{% endif %}
+{% endblock %}

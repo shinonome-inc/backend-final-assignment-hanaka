@@ -3,6 +3,8 @@ from django.contrib.auth import SESSION_KEY
 from django.test import TestCase
 from django.urls import reverse
 
+from tweets.models import Tweet
+
 from .models import User
 
 
@@ -310,8 +312,24 @@ class TestLogoutView(TestCase):
 
 
 class TestUserProfileView(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpassword",
+        )
+        self.client.login(username="testuser", password="testpassword")
+        self.post = Tweet.objects.create(user=self.user, content="testpost")
+        self.url = reverse(
+            "accounts:user_profile", kwargs={"username": self.user.username}
+        )
+
     def test_success_get(self):
-        pass
+        response = self.client.get(self.url)
+        context = response.context
+        self.assertQuerysetEqual(
+            context["tweet_list"], Tweet.objects.filter(user=self.user)
+        )
+        # usernameを元に情報を取ってきている
 
 
 class TestUserProfileEditView(TestCase):
