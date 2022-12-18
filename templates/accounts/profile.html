@@ -12,10 +12,8 @@
                 {{ user.username }}
             </div>
             <div class="card-body">
-                <!-- コンテキストが存在しているか確認 -->
-                {{ following }}
                 {% if request.user == user %}
-                プロフィールを編集
+                プロフィール
                 {% elif following %}
                 <p class="nav-link">
                 <form action="{% url 'accounts:unfollow' user.username %}" method="post">
@@ -42,9 +40,9 @@
             </div>
             <div class="card-footer text-muted">
                 <p class="nav-link"><a href="{% url 'accounts:following_list' user.username %}"><button type="button"
-                            class="btn btn-outline-primary">フォロー中 {{ following_count }}</button></a></p>
-                <p class="nav-link"><a href="{% url 'accounts:follower_list' user.username %}"><button type="button"
-                            class="btn btn-outline-primary">フォロワー {{ follower_count }}</button></a></p>
+                            class="btn btn-outline-secondary btn-sm">フォロー中 {{ following_count }}</button></a> <a
+                        href="{% url 'accounts:follower_list' user.username %}"><button type="button"
+                            class="btn btn-outline-secondary btn-sm">フォロワー {{ follower_count }}</button></a></p>
             </div>
         </div>
     </div>
