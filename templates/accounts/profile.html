@@ -14,7 +14,7 @@
             <div class="card-body">
                 {% if request.user == user %}
                 プロフィール
-                {% elif following %}
+                {% elif connected %}
                 <p class="nav-link">
                 <form action="{% url 'accounts:unfollow' user.username %}" method="post">
                     {% csrf_token %}

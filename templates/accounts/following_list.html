@@ -4,9 +4,9 @@
 <h2>フォロー中</h2>
 <p class="nav-link"><a href="{{request.META.HTTP_REFERER}}"><button type="button"
             class="btn btn-outline-primary">戻る</button></a></p>
-{% if login_user_is_following %}
+{% if following_list %}
 <div class="row  justify-content-center">
-    {% for following_user in login_user_is_following %}
+    {% for following_user in following_list %}
     <div class="col-8">
         <div class="card">
             <div class="card-header">フォロー中</div>

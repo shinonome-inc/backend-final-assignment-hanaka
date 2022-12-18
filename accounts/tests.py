@@ -429,9 +429,6 @@ class TestUnfollowView(TestCase):
         )
         self.client.login(username="testuser1", password="testpassword")
         FriendShip.objects.create(follower=self.user1, following=self.user2)
-        # self.url = reverse(
-        #     "accounts:unfollow", kwargs={"username": self.user1.username}
-        # )
 
     def test_success_post(self):
         self.url = reverse(

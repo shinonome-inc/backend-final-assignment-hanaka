@@ -74,7 +74,7 @@ class UserProfileView(LoginRequiredMixin, DetailView):
             .filter(user=user)  # (modelsで指定したuser = 3行前で定義したuser)
             .order_by("-created_at")
         )
-        context["following"] = FriendShip.objects.filter(
+        context["connected"] = FriendShip.objects.filter(
             following=user, follower=self.request.user
         ).exists
         context["following_count"] = FriendShip.objects.filter(follower=user).count()
@@ -133,11 +133,9 @@ class FollowingListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs["username"])
-        # urlで表示している人の情報を持ってくる
-        context["login_user_is_following"] = FriendShip.objects.select_related(
+        context["following_list"] = FriendShip.objects.select_related(
             "follower"
         ).filter(follower=user)
-        # detailviewで見ているユーザーがフォローしているひとの情報
         # select_related：User＆FriendShipテーブルを合体させてN+1問題を解消する(インナージョイン)(for文で回すから)
         return context
 
@@ -150,9 +148,7 @@ class FollowerListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs["username"])
         # urlで表示している人の情報を持ってくる
-        context["login_user_is_followed"] = FriendShip.objects.select_related(
+        context["follower_list"] = FriendShip.objects.select_related(
             "following"
         ).filter(following=user)
-        # detailviewで見ているユーザーをフォローしているひとの情報
-        # select_related：User＆FriendShipテーブルを合体させてN+1問題を解消する(インナージョイン)(for文で回すから)
         return context
