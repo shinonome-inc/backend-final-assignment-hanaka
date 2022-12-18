@@ -9,7 +9,10 @@
         <div class="card">
             <div class="card-header">フォロー中</div>
             <div class="card-body">
-                <p class="card-text">{{ following_user.following }} </p>
+                <p class="card-text">
+                    <a href="{% url 'accounts:user_profile' following_user.following.username %}" class="link-dark">
+                        {{ following_user.following }}</a>
+                </p>
             </div>
             <div class="card-footer text-muted">
 

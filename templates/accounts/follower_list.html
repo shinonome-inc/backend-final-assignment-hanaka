@@ -9,7 +9,10 @@
         <div class="card">
             <div class="card-header">フォローされています</div>
             <div class="card-body">
-                <p class="card-text"> {{ followers.follower }} </p>
+                <p class="card-text">
+                    <a href="{% url 'accounts:user_profile' followers.follower.username %}" class="link-dark">
+                        {{ followers.follower }}</a>
+                </p>
             </div>
             <div class="card-footer text-muted">
 
