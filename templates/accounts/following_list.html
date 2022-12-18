@@ -2,6 +2,8 @@
 {% block title %} フォロー中 {% endblock %}
 {% block content %}
 <h2>フォロー中</h2>
+<p class="nav-link"><a href="{{request.META.HTTP_REFERER}}"><button type="button"
+            class="btn btn-outline-primary">戻る</button></a></p>
 {% if login_user_is_following %}
 <div class="row  justify-content-center">
     {% for following_user in login_user_is_following %}
