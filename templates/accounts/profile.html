@@ -3,7 +3,6 @@
 {% block title %} プロフィール {% endblock %}
 {% block content %}
 <h2>プロフィール</h2>
-<!-- 前のページ(=home)に遷移する -->
 <p class="nav-link"><a href="{% url 'tweets:home' %}"><button type="button"
             class="btn btn-outline-primary">ホーム</button></a></p>
 <div class="row  justify-content-center">
@@ -13,9 +12,39 @@
                 {{ user.username }}
             </div>
             <div class="card-body">
-                フォロー/フォロワー等表示
+                <!-- コンテキストが存在しているか確認 -->
+                {{ following }}
+                {% if request.user == user %}
+                プロフィールを編集
+                {% elif following %}
+                <p class="nav-link">
+                <form action="{% url 'accounts:unfollow' user.username %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary">フォロー解除</button>
+                </form>
+                </p>
+                {% else %}
+                <p class="nav-link">
+                <form action="{% url 'accounts:follow' user.username %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary">フォロー</button>
+                </form>
+                </p>
+                {% endif %}
+                <!-- 次に開いたときだけメッセージ出てくる仕様、いるかな？ -->
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                        {% endfor %}
+                </ul>
+                {% endif %}
             </div>
             <div class="card-footer text-muted">
+                <p class="nav-link"><a href="{% url 'accounts:following_list' user.username %}"><button type="button"
+                            class="btn btn-outline-primary">フォロー中 {{ following_count }}</button></a></p>
+                <p class="nav-link"><a href="{% url 'accounts:follower_list' user.username %}"><button type="button"
+                            class="btn btn-outline-primary">フォロワー {{ follower_count }}</button></a></p>
             </div>
         </div>
     </div>

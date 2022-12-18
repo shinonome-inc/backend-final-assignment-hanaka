@@ -1,11 +1,12 @@
 from django.conf import settings
 from django.contrib.auth import SESSION_KEY
+from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 
 from tweets.models import Tweet
 
-from .models import User
+from .models import FriendShip, User
 
 
 class TestSignUpView(TestCase):
@@ -313,21 +314,36 @@ class TestLogoutView(TestCase):
 
 class TestUserProfileView(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(
-            username="testuser",
+        self.user1 = User.objects.create_user(
+            username="testuser1",
             password="testpassword",
         )
-        self.client.login(username="testuser", password="testpassword")
-        self.post = Tweet.objects.create(user=self.user, content="testpost")
+        self.user2 = User.objects.create_user(
+            username="testuser2",
+            password="testpassword",
+        )
+        self.client.login(username="testuser1", password="testpassword")
+        self.post = Tweet.objects.create(user=self.user1, content="testpost")
         self.url = reverse(
-            "accounts:user_profile", kwargs={"username": self.user.username}
+            "accounts:user_profile", kwargs={"username": self.user1.username}
+        )
+        self.friendship = FriendShip.objects.create(
+            follower=self.user1, following=self.user2
         )
 
     def test_success_get(self):
         response = self.client.get(self.url)
         context = response.context
         self.assertQuerysetEqual(
-            context["tweet_list"], Tweet.objects.filter(user=self.user)
+            context["tweet_list"], Tweet.objects.filter(user=self.user1)
+        )
+        self.assertEqual(
+            context["following_count"],
+            FriendShip.objects.filter(follower=self.user1).count(),
+        )
+        self.assertEqual(
+            context["follower_count"],
+            FriendShip.objects.filter(following=self.user1).count(),
         )
         # usernameを元に情報を取ってきている
 
@@ -347,32 +363,153 @@ class TestUserProfileEditView(TestCase):
 
 
 class TestFollowView(TestCase):
+    def setUp(self):
+
+        self.user1 = User.objects.create_user(
+            username="testuser1",
+            password="testpassword",
+        )
+        self.user2 = User.objects.create_user(
+            username="testuser2",
+            password="testpassword",
+        )
+        self.client.login(username="testuser1", password="testpassword")
+
     def test_success_post(self):
-        pass
+        self.url = reverse("accounts:follow", kwargs={"username": self.user2.username})
+        response = self.client.post(self.url)
+        self.assertRedirects(
+            response,
+            reverse(settings.LOGIN_REDIRECT_URL),
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertTrue(
+            FriendShip.objects.filter(
+                follower=self.user1, following=self.user2
+            ).exists()
+        )
 
     def test_failure_post_with_not_exist_user(self):
-        pass
+        self.url = reverse("accounts:follow", kwargs={"username": "not_exist_username"})
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 404)
+        messages = list(get_messages(response.wsgi_request))
+        message = str(messages[0])
+        self.assertEquals(message, "指定されたユーザーは存在しません。")
+        self.assertFalse(
+            FriendShip.objects.filter(
+                follower=self.user1, following__username="not_exist_username"
+            ).exists()
+        )
 
     def test_failure_post_with_self(self):
-        pass
+        self.url = reverse("accounts:follow", kwargs={"username": self.user1.username})
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 200)
+        messages = list(get_messages(response.wsgi_request))
+        message = str(messages[0])
+        self.assertEquals(message, "無効な操作です。")
+        self.assertFalse(
+            FriendShip.objects.filter(
+                following=self.user1, follower=self.user1
+            ).exists()
+        )
 
 
 class TestUnfollowView(TestCase):
-    def test_success_post(self):
-        pass
+    def setUp(self):
+        self.user1 = User.objects.create_user(
+            username="testuser1",
+            password="testpassword",
+        )
+        self.user2 = User.objects.create_user(
+            username="testuser2",
+            password="testpassword",
+        )
+        self.client.login(username="testuser1", password="testpassword")
+        FriendShip.objects.create(follower=self.user1, following=self.user2)
+        # self.url = reverse(
+        #     "accounts:unfollow", kwargs={"username": self.user1.username}
+        # )
 
-    def test_failure_post_with_not_exist_tweet(self):
-        pass
+    def test_success_post(self):
+        self.url = reverse(
+            "accounts:unfollow", kwargs={"username": self.user2.username}
+        )
+        response = self.client.post(self.url)
+        self.assertRedirects(
+            response,
+            reverse(settings.LOGIN_REDIRECT_URL),
+            status_code=302,
+            target_status_code=200,
+        )
+        self.assertFalse(
+            FriendShip.objects.filter(
+                follower=self.user1, following=self.user2
+            ).exists()
+        )
+
+    def test_failure_post_with_not_exist_user(self):
+        self.url = reverse(
+            "accounts:unfollow", kwargs={"username": "not_exist_username"}
+        )
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 404)
+        messages = list(get_messages(response.wsgi_request))
+        message = str(messages[0])
+        self.assertEquals(message, "指定されたユーザーは存在しません。")
+        self.assertTrue(
+            FriendShip.objects.filter(
+                follower=self.user1, following=self.user2
+            ).exists()
+        )
 
     def test_failure_post_with_incorrect_user(self):
-        pass
+        self.url = reverse(
+            "accounts:unfollow", kwargs={"username": self.user1.username}
+        )
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 200)
+        messages = list(get_messages(response.wsgi_request))
+        message = str(messages[0])
+        self.assertEquals(message, "無効な操作です。")
+        self.assertTrue(
+            FriendShip.objects.filter(
+                follower=self.user1, following=self.user2
+            ).exists()
+        )
 
 
 class TestFollowingListView(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpassword",
+        )
+        self.client.login(username="testuser", password="testpassword")
+
     def test_success_get(self):
-        pass
+        self.url = reverse(
+            "accounts:following_list", kwargs={"username": self.user.username}
+        )
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "accounts/following_list.html")
 
 
 class TestFollowerListView(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser",
+            password="testpassword",
+        )
+        self.client.login(username="testuser", password="testpassword")
+
     def test_success_get(self):
-        pass
+        self.url = reverse(
+            "accounts:follower_list", kwargs={"username": self.user.username}
+        )
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "accounts/follower_list.html")

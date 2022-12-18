@@ -14,6 +14,7 @@ class SignUpForm(UserCreationForm):
             "username",
             "email",
         )
+        # UserCreationFormでpassword1/2は書かれているのでfields= に書く必要なし。
 
 
 class LoginForm(AuthenticationForm):
