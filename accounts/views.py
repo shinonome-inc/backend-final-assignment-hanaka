@@ -9,8 +9,6 @@ from django.views import View
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView
 
-from tweets.models import Tweet
-
 from .forms import LoginForm, SignUpForm
 from .models import FriendShip, User
 
@@ -67,16 +65,12 @@ class UserProfileView(LoginRequiredMixin, DetailView):
         # 既存のコンテキストデータを取得
         # ↓↓ 追加したい情報たち
         user = self.object
-        context["tweet_list"] = (
-            Tweet.objects.select_related(
-                "user"
-            )  # User＆Tweetテーブルを合体させてN+1問題解消(インナージョイン)(for文で回すから)
-            .filter(user=user)  # (modelsで指定したuser = 3行前で定義したuser)
-            .order_by("-created_at")
-        )
-        context["connected"] = FriendShip.objects.filter(
+        context["tweet_list"] = user.tweet_set.order_by("-created_at")
+        # User＆Tweetテーブルを合体させてN+1問題解消(インナージョイン)(for文で回すから)
+        # オブジェクト名.モデル名(小文字)_set.クエリセットAPI：1対多 の参照。
+        context["is_following"] = FriendShip.objects.filter(
             following=user, follower=self.request.user
-        ).exists
+        ).exists()
         context["following_count"] = FriendShip.objects.filter(follower=user).count()
         context["follower_count"] = FriendShip.objects.filter(following=user).count()
         # boolの代わりに、少なくともひとつ以上の結果があるか判断するクエリセットAPI(なくても行けそう)
@@ -117,13 +111,13 @@ class UnFollowView(LoginRequiredMixin, View):
             messages.warning(request, "指定されたユーザーは存在しません。")
             raise Http404
 
-        if follower == following:
-            messages.warning(request, "無効な操作です。")
-            return render(request, "tweets/home.html")
-        else:
+        if FriendShip.objects.filter(following=following, follower=follower).exists():
             FriendShip.objects.filter(following=following, follower=follower).delete()
             messages.info(request, f"{following.username}のフォローを解除しました。")
-        return redirect("tweets:home")
+            return redirect("tweets:home")
+        else:
+            messages.warning(request, "無効な操作です。")
+            return render(request, "tweets/home.html")
 
 
 class FollowingListView(LoginRequiredMixin, ListView):
