@@ -9,7 +9,7 @@
     {% for followers in follower_list %}
     <div class="col-8">
         <div class="card">
-            <div class="card-header">フォローされています</div>
+            <div class="card-header"></div>
             <div class="card-body">
                 <p class="card-text">
                     <a href="{% url 'accounts:user_profile' followers.follower.username %}" class="link-dark">
