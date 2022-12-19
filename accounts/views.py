@@ -94,11 +94,11 @@ class FollowView(LoginRequiredMixin, View):
             messages.warning(request, "無効な操作です。")
             return render(request, "tweets/home.html")
         elif FriendShip.objects.filter(follower=follower, following=following).exists():
-            messages.warning(request, f"あなたはすでに{ following.username }をフォローしています。")
+            messages.warning(request, f"あなたはすでに { following.username } をフォローしています。")
             return render(request, "tweets/home.html")  # これがないと302が出てしまう...。
         else:
             FriendShip.objects.create(follower=follower, following=following)
-            messages.info(request, f"{ following.username }をフォローしました。")
+            messages.info(request, f"{ following.username } をフォローしました。")
             return redirect("tweets:home")
 
 
@@ -113,7 +113,7 @@ class UnFollowView(LoginRequiredMixin, View):
 
         if FriendShip.objects.filter(following=following, follower=follower).exists():
             FriendShip.objects.filter(following=following, follower=follower).delete()
-            messages.info(request, f"{following.username}のフォローを解除しました。")
+            messages.info(request, f"{following.username} のフォローを解除しました。")
             return redirect("tweets:home")
         else:
             messages.warning(request, "無効な操作です。")
