@@ -394,9 +394,6 @@ class TestFollowView(TestCase):
         url = reverse("accounts:follow", kwargs={"username": "not_exist_username"})
         response = self.client.post(url)
         self.assertEqual(response.status_code, 404)
-        messages = list(get_messages(response.wsgi_request))
-        message = str(messages[0])
-        self.assertEquals(message, "指定されたユーザーは存在しません。")
         self.assertFalse(
             FriendShip.objects.filter(
                 follower=self.user1, following__username="not_exist_username"
@@ -449,9 +446,6 @@ class TestUnfollowView(TestCase):
         url = reverse("accounts:unfollow", kwargs={"username": "not_exist_username"})
         response = self.client.post(url)
         self.assertEqual(response.status_code, 404)
-        messages = list(get_messages(response.wsgi_request))
-        message = str(messages[0])
-        self.assertEquals(message, "指定されたユーザーは存在しません。")
         self.assertTrue(
             FriendShip.objects.filter(
                 follower=self.user1, following=self.user2

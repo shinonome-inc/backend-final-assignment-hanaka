@@ -2,7 +2,6 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
@@ -71,22 +70,17 @@ class UserProfileView(LoginRequiredMixin, DetailView):
         context["is_following"] = FriendShip.objects.filter(
             following=user, follower=self.request.user
         ).exists()
-        context["following_count"] = FriendShip.objects.filter(follower=user).count()
-        context["follower_count"] = FriendShip.objects.filter(following=user).count()
         # boolの代わりに、少なくともひとつ以上の結果があるか判断するクエリセットAPI(なくても行けそう)
         # 参考：https://man.plustar.jp/django/ref/models/querysets.html#django.db.models.query.QuerySet.exists
+        context["following_count"] = FriendShip.objects.filter(follower=user).count()
+        context["follower_count"] = FriendShip.objects.filter(following=user).count()
         return context
 
 
 class FollowView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         follower = self.request.user  # ログイン中のユーザーを参照
-        # following = get_object_or_404(User, username=self.kwargs["username"])
-        try:
-            following = User.objects.get(username=self.kwargs["username"])
-        except User.DoesNotExist:
-            messages.warning(request, "指定されたユーザーは存在しません。")
-            raise Http404
+        following = get_object_or_404(User, username=self.kwargs["username"])
 
         if follower == following:
             # = : 代入
@@ -105,19 +99,17 @@ class FollowView(LoginRequiredMixin, View):
 class UnFollowView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         follower = self.request.user  # ログイン中のユーザーを参照
-        try:
-            following = User.objects.get(username=self.kwargs["username"])
-        except User.DoesNotExist:
-            messages.warning(request, "指定されたユーザーは存在しません。")
-            raise Http404
+        following = get_object_or_404(User, username=self.kwargs["username"])
 
-        if FriendShip.objects.filter(following=following, follower=follower).exists():
-            FriendShip.objects.filter(following=following, follower=follower).delete()
+        if friend := FriendShip.objects.filter(following=following, follower=follower):
+            friend.delete()
             messages.info(request, f"{following.username} のフォローを解除しました。")
             return redirect("tweets:home")
         else:
             messages.warning(request, "無効な操作です。")
             return render(request, "tweets/home.html")
+        # セイウチ演算子：代入文→代入式として使えるように！！
+        # 特にif文においては、代入と評価を同時に行うことが出来るようになる。
 
 
 class FollowingListView(LoginRequiredMixin, ListView):
