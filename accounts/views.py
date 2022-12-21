@@ -120,7 +120,7 @@ class FollowingListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs["username"])
         context["following_list"] = FriendShip.objects.select_related(
-            "follower"
+            "following"
         ).filter(follower=user)
         # select_related：User＆FriendShipテーブルを合体させてN+1問題を解消する(インナージョイン)(for文で回すから)
         return context
@@ -134,7 +134,7 @@ class FollowerListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs["username"])
         # urlで表示している人の情報を持ってくる
-        context["follower_list"] = FriendShip.objects.select_related(
-            "following"
-        ).filter(following=user)
+        context["follower_list"] = FriendShip.objects.select_related("follower").filter(
+            following=user
+        )
         return context

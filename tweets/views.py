@@ -13,7 +13,7 @@ class HomeView(LoginRequiredMixin, ListView):
     context_object_name = "tweet_list"
     # テンプレートで表示する際のモデルの参照名を設定
     # → どこから持ってきたデータか分かり易くなった気がする
-    queryset = Tweet.objects.order_by("-created_at")
+    queryset = Tweet.objects.select_related("user").order_by("-created_at")
     # created_at を、マイナスを付けることで日付が新しい順にしてる
 
 
