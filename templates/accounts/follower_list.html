@@ -6,14 +6,14 @@
             class="btn btn-outline-primary">戻る</button></a></p>
 {% if follower_list %}
 <div class="row  justify-content-center">
-    {% for follower in follower_list %}
+    {% for follower_user in follower_list %}
     <div class="col-8">
         <div class="card">
             <div class="card-header"></div>
             <div class="card-body">
                 <p class="card-text">
-                    <a href="{% url 'accounts:user_profile' follower.follower.username %}" class="link-dark">
-                        {{ follower.follower }}</a>
+                    <a href="{% url 'accounts:user_profile' follower_user.follower.username %}" class="link-dark">
+                        {{ follower_user.follower }}</a>
                 </p>
             </div>
             <div class="card-footer text-muted">
