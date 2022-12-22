@@ -133,9 +133,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "accounts.User"
 
 
-SQL_DEBUG = False  # testの時はここFalseを変える
-
-
 # debug_toolbar
 SQL_DEBUG = False  # testの時はここFalseを変える
 
