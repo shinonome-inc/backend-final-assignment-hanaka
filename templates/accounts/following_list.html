@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %} フォロー中 {% endblock %}
+{% block content %}
+<h2>フォロー中</h2>
+<p class="nav-link"><a href="{{request.META.HTTP_REFERER}}"><button type="button"
+            class="btn btn-outline-primary">戻る</button></a></p>
+{% if following_list %}
+<div class="row  justify-content-center">
+    {% for following_user in following_list %}
+    <div class="col-8">
+        <div class="card">
+            <div class="card-header"></div>
+            <div class="card-body">
+                <p class="card-text">
+                    <a href="{% url 'accounts:user_profile' following_user.following.username %}" class="link-dark">
+                        {{ following_user.following }}</a>
+                </p>
+            </div>
+            <div class="card-footer text-muted">
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="row  justify-content-center">
+    <div class="col-8">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text"> フォロー中のひとはいません </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}

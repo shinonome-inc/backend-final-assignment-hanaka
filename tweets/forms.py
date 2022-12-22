@@ -12,3 +12,6 @@ class CreateTweetForm(forms.ModelForm):
                 attrs={"rows": 4, "cols": 35, "placeholder": "いまどうしてる？"}
             )
         }
+
+
+# CharFieldでは、max_lengthの指定が必須

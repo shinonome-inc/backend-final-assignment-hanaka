@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %} フォロワー {% endblock %}
+{% block content %}
+<h2>フォロワー</h2>
+<p class="nav-link"><a href="{{request.META.HTTP_REFERER}}"><button type="button"
+            class="btn btn-outline-primary">戻る</button></a></p>
+{% if follower_list %}
+<div class="row  justify-content-center">
+    {% for follower_user in follower_list %}
+    <div class="col-8">
+        <div class="card">
+            <div class="card-header"></div>
+            <div class="card-body">
+                <p class="card-text">
+                    <a href="{% url 'accounts:user_profile' follower_user.follower.username %}" class="link-dark">
+                        {{ follower_user.follower }}</a>
+                </p>
+            </div>
+            <div class="card-footer text-muted">
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="row  justify-content-center">
+    <div class="col-8">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-text"> フォロワーはいません </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}
