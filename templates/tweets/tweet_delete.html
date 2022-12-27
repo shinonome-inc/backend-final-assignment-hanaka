@@ -11,6 +11,6 @@
         <l1>{{ tweet_delete.created_at }}</li>
     </ul>
     <a href="{% url 'tweets:detail' tweet_delete.pk %}" class="btn btn-outline-primary">戻る</a>
-    <button type="submit" class="btn btn-primary">削除</button>
+    <button type="submit" class="btn btn-danger">削除</button>
 </form>
 {% endblock %}

@@ -19,7 +19,7 @@
                     <p class="nav-link">
                     <form action="{% url 'accounts:unfollow' user.username %}" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-primary">フォロー解除</button>
+                        <button type="submit" class="btn btn-outline-danger">フォロー解除</button>
                     </form>
                     </p>
                     {% else %}

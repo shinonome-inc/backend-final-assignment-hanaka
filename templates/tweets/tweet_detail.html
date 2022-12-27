@@ -12,6 +12,6 @@
 
 <a href="{% url 'tweets:home' %}" class="btn btn-outline-primary">戻る</a>
 {% if request.user == tweet_detail.user %}
-<a href="{% url 'tweets:delete' tweet_detail.pk %}" class="btn btn-outline-primary">削除する</a>
+<a href="{% url 'tweets:delete' tweet_detail.pk %}" class="btn btn-outline-danger">削除する</a>
 {% endif %}
 {% endblock %}
