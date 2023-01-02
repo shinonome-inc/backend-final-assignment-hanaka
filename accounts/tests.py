@@ -406,7 +406,7 @@ class TestFollowView(TestCase):
         self.assertEqual(response.status_code, 200)
         messages = list(get_messages(response.wsgi_request))
         message = str(messages[0])
-        self.assertEquals(message, "無効な操作です。")
+        self.assertEqual(message, "無効な操作です。")
         self.assertFalse(
             FriendShip.objects.filter(
                 following=self.user1, follower=self.user1
@@ -458,7 +458,7 @@ class TestUnfollowView(TestCase):
         self.assertEqual(response.status_code, 200)
         messages = list(get_messages(response.wsgi_request))
         message = str(messages[0])
-        self.assertEquals(message, "無効な操作です。")
+        self.assertEqual(message, "無効な操作です。")
         self.assertTrue(
             FriendShip.objects.filter(
                 follower=self.user1, following=self.user2
