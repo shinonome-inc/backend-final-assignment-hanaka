@@ -39,3 +39,6 @@ class FriendShip(models.Model):
                 fields=["follower", "following"], name="friendship_unique"
             ),
         ]
+
+    def __str__(self):
+        return f"{self.follower} → {self.following}"
