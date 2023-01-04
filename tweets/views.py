@@ -1,10 +1,13 @@
 # from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView
 
 from .forms import CreateTweetForm
-from .models import Tweet
+from .models import Like, Tweet
 
 
 class HomeView(LoginRequiredMixin, ListView):
@@ -44,3 +47,26 @@ class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         tweet = self.get_object()
         return self.request.user == tweet.user
+
+
+class LikeView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        tweet_id = self.kwargs["pk"]
+        tweet = get_object_or_404(Tweet, id=tweet_id)
+        Like.objects.get_or_create(tweet=tweet, user=user)
+        is_liked = True
+        context = {"is_liked": is_liked, "tweet_id": tweet.pk}
+        return JsonResponse(context)
+
+
+class UnlikeView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        tweet_id = self.kwargs["pk"]
+        tweet = get_object_or_404(Tweet, id=tweet_id)
+        if like := Like.objects.filter(user=user, tweet=tweet):
+            like.delete()
+        is_liked = False
+        context = {"is_liked": is_liked, "tweet_id": tweet.pk}
+        return JsonResponse(context)
