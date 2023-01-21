@@ -39,10 +39,10 @@ class TestSignUpView(TestCase):
                 username=user_data["username"],
                 email=user_data["email"],
             ).exists()
-        )  # DBのレコードが追加されていて、入力データと同一
+        )  # DBのレコードが追加されていて、入力データと同一であることの確認
 
         self.assertIn(SESSION_KEY, self.client.session)
-        # ログイン後のサーバー上のsession_key＝ブラウザ上のkeyの確認(clientがテスト内でwebブラウザとして機能する)。
+        # ログイン後のサーバー上のsession_key＝ブラウザ上のkeyの確認(clientがテスト内でwebブラウザとして機能する)
 
     def test_failure_post_with_empty_form(self):
         empty_data = {
@@ -345,7 +345,6 @@ class TestUserProfileView(TestCase):
             context["follower_count"],
             FriendShip.objects.filter(following=self.user1).count(),
         )
-        # usernameを元に情報を取ってきている
 
 
 class TestUserProfileEditView(TestCase):

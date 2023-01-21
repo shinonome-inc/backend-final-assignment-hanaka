@@ -1,4 +1,3 @@
-# modelを作成したら必ずpython manage.py makemigration → python manage.py migrate する
 from django.db import models
 from django.urls import reverse
 

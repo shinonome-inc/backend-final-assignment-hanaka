@@ -23,7 +23,7 @@ class HomeView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context["liked_list"] = user.like_set.values_list("tweet", flat=True)
-        # ログイン中のユーザーがいいねしているツイート一覧をidで取得している。
+        # ログイン中のユーザーがいいねしているツイート一覧をidで取得
         return context
 
 
