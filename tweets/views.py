@@ -2,7 +2,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView
 
@@ -18,6 +18,13 @@ class HomeView(LoginRequiredMixin, ListView):
     # → どこから持ってきたデータか分かり易くなった気がする
     queryset = Tweet.objects.select_related("user").order_by("-created_at")
     # created_at を、マイナスを付けることで日付が新しい順にしてる
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context["liked_list"] = user.like_set.values_list("tweet", flat=True)
+        # ログイン中のユーザーがいいねしているツイート一覧をidで取得している。
+        return context
 
 
 class TweetCreateView(LoginRequiredMixin, CreateView):
@@ -36,6 +43,11 @@ class TweetDetailView(LoginRequiredMixin, DetailView):
     model = Tweet
     context_object_name = "tweet_detail"
     template_name = "tweets/tweet_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["like_count"] = Like.objects.filter(tweet=self.object).count()
+        return context
 
 
 class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -56,7 +68,8 @@ class LikeView(LoginRequiredMixin, View):
         tweet = get_object_or_404(Tweet, id=tweet_id)
         Like.objects.get_or_create(tweet=tweet, user=user)
         is_liked = True
-        context = {"is_liked": is_liked, "tweet_id": tweet.pk}
+        url = reverse("tweets:unlike", kwargs={"pk": tweet_id})
+        context = {"is_liked": is_liked, "url": url}
         return JsonResponse(context)
 
 
@@ -68,5 +81,6 @@ class UnlikeView(LoginRequiredMixin, View):
         if like := Like.objects.filter(user=user, tweet=tweet):
             like.delete()
         is_liked = False
-        context = {"is_liked": is_liked, "tweet_id": tweet.pk}
+        url = reverse("tweets:like", kwargs={"pk": tweet_id})
+        context = {"is_liked": is_liked, "url": url}
         return JsonResponse(context)

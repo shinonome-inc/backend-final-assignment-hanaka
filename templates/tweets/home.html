@@ -50,7 +50,7 @@
                     </a>
                 </div>
                 <div class="card-footer text-muted">
-                    {{ tweet.created_at }}
+                    {% include "tweets/like.html" %} {{ tweet.created_at }}
                 </div>
             </div>
         </div>
