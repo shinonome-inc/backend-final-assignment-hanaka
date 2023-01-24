@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block title %} フォロー中 {% endblock %}
 {% block content %}
-<h2>フォロー中</h2>
-<p class="nav-link"><a href="{{request.META.HTTP_REFERER}}"><button type="button"
-            class="btn btn-outline-primary">戻る</button></a></p>
+<h2> &nbsp; フォロー中 </h2>
+<div class="p-2"><a href="{{request.META.HTTP_REFERER}}"><button type="button"
+            class="btn btn-outline-primary">戻る</button></a></div>
 {% if following_list %}
 <div class="row  justify-content-center">
     {% for following_user in following_list %}
