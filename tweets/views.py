@@ -1,4 +1,3 @@
-# from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -68,8 +67,16 @@ class LikeView(LoginRequiredMixin, View):
         tweet = get_object_or_404(Tweet, id=tweet_id)
         Like.objects.get_or_create(tweet=tweet, user=user)
         is_liked = True
-        url = reverse("tweets:unlike", kwargs={"pk": tweet_id})
-        context = {"is_liked": is_liked, "url": url}
+        like_url = reverse("tweets:like", kwargs={"pk": tweet_id})
+        unlike_url = reverse("tweets:unlike", kwargs={"pk": tweet_id})
+        like_count = tweet.like_set.count()
+        context = {
+            "tweet_id": tweet_id,
+            "is_liked": is_liked,
+            "like_url": like_url,
+            "unlike_url": unlike_url,
+            "like_count": like_count,
+        }
         return JsonResponse(context)
 
 
@@ -81,6 +88,14 @@ class UnlikeView(LoginRequiredMixin, View):
         if like := Like.objects.filter(user=user, tweet=tweet):
             like.delete()
         is_liked = False
-        url = reverse("tweets:like", kwargs={"pk": tweet_id})
-        context = {"is_liked": is_liked, "url": url}
+        like_url = reverse("tweets:like", kwargs={"pk": tweet_id})
+        unlike_url = reverse("tweets:unlike", kwargs={"pk": tweet_id})
+        like_count = tweet.like_set.count()
+        context = {
+            "tweet_id": tweet_id,
+            "is_liked": is_liked,
+            "like_url": like_url,
+            "unlike_url": unlike_url,
+            "like_count": like_count,
+        }
         return JsonResponse(context)

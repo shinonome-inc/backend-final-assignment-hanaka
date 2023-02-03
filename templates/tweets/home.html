@@ -49,8 +49,9 @@
                         </button>
                     </a>
                 </div>
-                <div class="card-footer text-muted">
-                    {% include "tweets/like.html" %} {{ tweet.created_at }}
+                <div class="card-footer">
+                    {% include "tweets/like.html" %}
+                    <div class="text-muted">{{ tweet.created_at }}</div>
                 </div>
             </div>
         </div>

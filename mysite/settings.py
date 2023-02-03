@@ -135,7 +135,7 @@ AUTH_USER_MODEL = "accounts.User"
 
 
 # debug_toolbar
-SQL_DEBUG = False  # testの時はここFalseを変える
+SQL_DEBUG = True  # testの時はここFalseを変える
 
 if SQL_DEBUG:
 

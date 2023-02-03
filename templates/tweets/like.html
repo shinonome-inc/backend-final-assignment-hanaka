@@ -1,17 +1,19 @@
 <!-- いいね済 -->
 {% if tweet.id in liked_list %}
-<form action="{% url 'tweets:unlike' tweet.id %}" method="post">
-    {% csrf_token %}
-    <button id="like_button" onclick="changeLike()" data-url="{% url 'tweets:unlike' tweet.id %}" style="border: 0px;">
-        <i class="fa-solid fa-heart fa-lg" style="color:red;"></i></button>
-</form>
+<button id="tweet-{{tweet.id}}" onclick="changeLike(id)" data-url="{% url 'tweets:unlike' tweet.id %}"
+    style="border: 0px;">
+    <i class="fa-solid fa-heart fa-lg" style="color:rgb(235, 70, 70);"></i></button>
 
-<!-- いいねこれから -->
+
+<!-- ツイート毎のいいねボタンを識別するために、idに個々のツイートidを充てる -->
+
+<!--いいねこれから -->
 {% else %}
-<form action="{% url 'tweets:like' tweet.id %}" method="post">
-    {% csrf_token %}
-    <button id="like_button" onclick="changeLike()" data-url="{% url 'tweets:like' tweet.id %}" style="border: 0px;">
-        <i class="fa-regular fa-heart fa-lg"></i></button>
-</form>
+<button id="tweet-{{tweet.id}}" onclick="changeLike(id)" data-url="{% url 'tweets:like' tweet.id %}"
+    style="border: 0px;">
+    <i class="fa-regular fa-heart fa-lg"></i></button>
+
 
 {% endif %}
+
+<span class="count_{{tweet.id}}">{{ tweet.like_set.count }} </span>

@@ -73,6 +73,7 @@ class UserProfileView(LoginRequiredMixin, DetailView):
         # 参考：https://man.plustar.jp/django/ref/models/querysets.html#django.db.models.query.QuerySet.exists
         context["following_count"] = FriendShip.objects.filter(follower=user).count()
         context["follower_count"] = FriendShip.objects.filter(following=user).count()
+        user = self.request.user  # userという変数を上書きしてしまうのはOKなのか...？
         context["liked_list"] = user.like_set.values_list("tweet", flat=True)
         return context
 
