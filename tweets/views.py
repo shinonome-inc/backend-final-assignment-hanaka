@@ -66,7 +66,7 @@ class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 class LikeView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
+    def post(self, request, **kwargs):
         user = self.request.user
         tweet_id = self.kwargs["pk"]
         tweet = get_object_or_404(Tweet, id=tweet_id)
@@ -86,7 +86,7 @@ class LikeView(LoginRequiredMixin, View):
 
 
 class UnlikeView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
+    def post(self, request, **kwargs):
         user = self.request.user
         tweet_id = self.kwargs["pk"]
         tweet = get_object_or_404(Tweet, id=tweet_id)

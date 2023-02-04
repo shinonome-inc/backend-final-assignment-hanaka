@@ -87,7 +87,7 @@ class UserProfileView(LoginRequiredMixin, DetailView):
 
 
 class FollowView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
+    def post(self, request, **kwargs):
         follower = self.request.user  # ログイン中のユーザーを参照
         following = get_object_or_404(User, username=self.kwargs["username"])
 
@@ -106,7 +106,7 @@ class FollowView(LoginRequiredMixin, View):
 
 
 class UnFollowView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
+    def post(self, request, **kwargs):
         follower = self.request.user
         following = get_object_or_404(User, username=self.kwargs["username"])
 
