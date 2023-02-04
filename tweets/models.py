@@ -18,6 +18,7 @@ class Tweet(models.Model):
     def get_absolute_url(self):
         return reverse("tweets:detail", kwargs={"pk": self.pk})
 
+    # related_nameはデフォルトではモデル名(小文字)_set
     # get_absolute_url(): modelの詳細ページのURLを返すメソッド
 
 

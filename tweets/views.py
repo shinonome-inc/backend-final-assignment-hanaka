@@ -104,6 +104,3 @@ class UnlikeView(LoginRequiredMixin, View):
             "like_count": like_count,
         }
         return JsonResponse(context)
-
-
-# ツイート毎にいいねの情報を持ってきてしまっている…。
