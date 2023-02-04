@@ -73,9 +73,10 @@ class UserProfileView(LoginRequiredMixin, DetailView):
         # 参考：https://man.plustar.jp/django/ref/models/querysets.html#django.db.models.query.QuerySet.exists
         following_count = FriendShip.objects.filter(follower=user).count()
         follower_count = FriendShip.objects.filter(following=user).count()
-        user = self.request.user
-        liked_list = user.likes.values_list("tweet", flat=True)
+        login_user = self.request.user
+        liked_list = login_user.likes.values_list("tweet", flat=True)
         context = {
+            "user": user,
             "tweet_list": tweet_list,
             "is_following": is_following,
             "following_count": following_count,
