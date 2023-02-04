@@ -63,7 +63,9 @@ class UserProfileView(LoginRequiredMixin, DetailView):
         # 既存のコンテキストデータを取得
         # ↓↓ 追加したい情報たち
         user = self.object
-        context["tweet_list"] = user.tweet_set.order_by("-created_at")
+        context["tweet_list"] = user.tweets.prefetch_related("likes").order_by(
+            "-created_at"
+        )
         # User＆Tweetテーブルを合体させる(INNER JOIN)
         # オブジェクト名.モデル名(小文字)_set.クエリセットAPI：1対多 の参照。
         context["is_following"] = FriendShip.objects.filter(
@@ -73,8 +75,8 @@ class UserProfileView(LoginRequiredMixin, DetailView):
         # 参考：https://man.plustar.jp/django/ref/models/querysets.html#django.db.models.query.QuerySet.exists
         context["following_count"] = FriendShip.objects.filter(follower=user).count()
         context["follower_count"] = FriendShip.objects.filter(following=user).count()
-        user = self.request.user  # userという変数を上書きしてしまうのはOKなのか...？
-        context["liked_list"] = user.like_set.values_list("tweet", flat=True)
+        user = self.request.user
+        context["liked_list"] = user.likes.values_list("tweet", flat=True)
         return context
 
 

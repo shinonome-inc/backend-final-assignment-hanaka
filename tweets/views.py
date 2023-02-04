@@ -15,13 +15,18 @@ class HomeView(LoginRequiredMixin, ListView):
     context_object_name = "tweet_list"
     # テンプレートで表示する際のモデルの参照名を設定
     # → どこから持ってきたデータか分かり易くなった気がする
-    queryset = Tweet.objects.select_related("user").order_by("-created_at")
+    # queryset = Tweet.objects.select_related("user").order_by("-created_at")
+    queryset = (
+        Tweet.objects.select_related("user")
+        .prefetch_related("likes")
+        .order_by("-created_at")
+    )
     # created_at を、マイナスを付けることで日付が新しい順にしてる
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        context["liked_list"] = user.like_set.values_list("tweet", flat=True)
+        context["liked_list"] = user.likes.values_list("tweet", flat=True)
         # ログイン中のユーザーがいいねしているツイート一覧をidで取得
         return context
 
@@ -69,7 +74,7 @@ class LikeView(LoginRequiredMixin, View):
         is_liked = True
         like_url = reverse("tweets:like", kwargs={"pk": tweet_id})
         unlike_url = reverse("tweets:unlike", kwargs={"pk": tweet_id})
-        like_count = tweet.like_set.count()
+        like_count = tweet.likes.count()
         context = {
             "tweet_id": tweet_id,
             "is_liked": is_liked,
@@ -90,7 +95,7 @@ class UnlikeView(LoginRequiredMixin, View):
         is_liked = False
         like_url = reverse("tweets:like", kwargs={"pk": tweet_id})
         unlike_url = reverse("tweets:unlike", kwargs={"pk": tweet_id})
-        like_count = tweet.like_set.count()
+        like_count = tweet.likes.count()
         context = {
             "tweet_id": tweet_id,
             "is_liked": is_liked,
@@ -99,3 +104,6 @@ class UnlikeView(LoginRequiredMixin, View):
             "like_count": like_count,
         }
         return JsonResponse(context)
+
+
+# ツイート毎にいいねの情報を持ってきてしまっている…。
