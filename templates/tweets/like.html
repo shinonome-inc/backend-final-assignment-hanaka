@@ -1,0 +1,19 @@
+<!-- いいね済 -->
+{% if tweet.id in liked_list %}
+<button id="tweet-{{tweet.id}}" onclick="changeLike(id)" data-url="{% url 'tweets:unlike' tweet.id %}"
+    style="border: 0px;">
+    <i class="fa-solid fa-heart fa-lg" style="color:rgb(235, 70, 70);"></i></button>
+
+
+<!-- ツイート毎のいいねボタンを識別するために、idに個々のツイートidを充てる -->
+
+<!--いいねこれから -->
+{% else %}
+<button id="tweet-{{tweet.id}}" onclick="changeLike(id)" data-url="{% url 'tweets:like' tweet.id %}"
+    style="border: 0px;">
+    <i class="fa-regular fa-heart fa-lg"></i></button>
+
+
+{% endif %}
+
+<span class="count_{{tweet.id}}">{{ tweet.likes.count }} </span>

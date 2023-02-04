@@ -1,11 +1,9 @@
-# from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from . import views
 
 app_name = "accounts"
 urlpatterns = [
-    # path('signup/', views.SignUpView.as_view(), name='signup'),
     path("signup/", views.SignUpView.as_view(), name="signup"),
     path("login/", views.UserLoginView.as_view(), name="login"),
     path("logout/", views.UserLogoutView.as_view(), name="logout"),
@@ -25,4 +23,3 @@ urlpatterns = [
 ]
 # app_nameとpathの引数のnameで逆引きしていく
 # .as_view()と同時に色々なメソッドが実行される。pathの中身をインスタンス化している
-# そのうちのひとつがget_context_data

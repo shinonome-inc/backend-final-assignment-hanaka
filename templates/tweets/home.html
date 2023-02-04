@@ -4,10 +4,10 @@
 
 {% block content %}
 <div>
-    <h2> ホーム </h2>
-
-    <p class="nav-link"><a href="{% url 'tweets:create' %}"><button type="button"
-                class="btn btn-primary">新規作成</button></a></p>
+    <h2> &nbsp; ホーム </h2>
+    <div class="p-2">
+        <a href="{% url 'tweets:create' %}"><button type="button" class="btn btn-primary">新規作成</button></a>
+    </div>
 
 
     <div class="mb-3">
@@ -49,8 +49,9 @@
                         </button>
                     </a>
                 </div>
-                <div class="card-footer text-muted">
-                    {{ tweet.created_at }}
+                <div class="card-footer">
+                    {% include "tweets/like.html" %}
+                    <div class="text-muted">{{ tweet.created_at }}</div>
                 </div>
             </div>
         </div>

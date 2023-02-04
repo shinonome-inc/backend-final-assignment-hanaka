@@ -56,7 +56,6 @@ class UserProfileView(LoginRequiredMixin, DetailView):
     template_name = "accounts/profile.html"
     slug_field = "username"
     slug_url_kwarg = "username"
-    # ここでは、ユーザーが存在しなかったら404を出す処理をしたい
 
     def get_context_data(self, **kwargs):
         # Insert the single object into the context dict.
@@ -64,21 +63,31 @@ class UserProfileView(LoginRequiredMixin, DetailView):
         # 既存のコンテキストデータを取得
         # ↓↓ 追加したい情報たち
         user = self.object
-        context["tweet_list"] = user.tweet_set.order_by("-created_at")
-        # User＆Tweetテーブルを合体させてN+1問題解消(インナージョイン)(for文で回すから)
-        # オブジェクト名.モデル名(小文字)_set.クエリセットAPI：1対多 の参照。
-        context["is_following"] = FriendShip.objects.filter(
+        tweet_list = user.tweets.prefetch_related("likes").order_by("-created_at")
+        # User＆Tweetテーブルを合体させる(INNER JOIN)
+        # オブジェクト名.related_name.クエリセットAPI：1対多 の参照。
+        is_following = FriendShip.objects.filter(
             following=user, follower=self.request.user
         ).exists()
-        # boolの代わりに、少なくともひとつ以上の結果があるか判断するクエリセットAPI(なくても行けそう)
+        # exists() : boolの代わりに、少なくともひとつ以上の結果があるか判断するクエリセットAPI(なくても行けそう)
         # 参考：https://man.plustar.jp/django/ref/models/querysets.html#django.db.models.query.QuerySet.exists
-        context["following_count"] = FriendShip.objects.filter(follower=user).count()
-        context["follower_count"] = FriendShip.objects.filter(following=user).count()
+        following_count = FriendShip.objects.filter(follower=user).count()
+        follower_count = FriendShip.objects.filter(following=user).count()
+        login_user = self.request.user
+        liked_list = login_user.likes.values_list("tweet", flat=True)
+        context = {
+            "user": user,
+            "tweet_list": tweet_list,
+            "is_following": is_following,
+            "following_count": following_count,
+            "follower_count": follower_count,
+            "liked_list": liked_list,
+        }
         return context
 
 
 class FollowView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
+    def post(self, request, **kwargs):
         follower = self.request.user  # ログイン中のユーザーを参照
         following = get_object_or_404(User, username=self.kwargs["username"])
 
@@ -89,7 +98,7 @@ class FollowView(LoginRequiredMixin, View):
             return render(request, "tweets/home.html")
         elif FriendShip.objects.filter(follower=follower, following=following).exists():
             messages.warning(request, f"あなたはすでに { following.username } をフォローしています。")
-            return render(request, "tweets/home.html")  # これがないと302が出てしまう...。
+            return render(request, "tweets/home.html")
         else:
             FriendShip.objects.create(follower=follower, following=following)
             messages.info(request, f"{ following.username } をフォローしました。")
@@ -97,8 +106,8 @@ class FollowView(LoginRequiredMixin, View):
 
 
 class UnFollowView(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        follower = self.request.user  # ログイン中のユーザーを参照
+    def post(self, request, **kwargs):
+        follower = self.request.user
         following = get_object_or_404(User, username=self.kwargs["username"])
 
         if friend := FriendShip.objects.filter(following=following, follower=follower):
@@ -108,7 +117,7 @@ class UnFollowView(LoginRequiredMixin, View):
         else:
             messages.warning(request, "無効な操作です。")
             return render(request, "tweets/home.html")
-        # セイウチ演算子：代入文→代入式として使えるように！！
+        # セイウチ演算子：代入文 → 代入式として使えるように！！
         # 特にif文においては、代入と評価を同時に行うことが出来るようになる。
 
 
@@ -122,7 +131,7 @@ class FollowingListView(LoginRequiredMixin, ListView):
         context["following_list"] = FriendShip.objects.select_related(
             "following"
         ).filter(follower=user)
-        # select_related：User＆FriendShipテーブルを合体させてN+1問題を解消する(インナージョイン)(for文で回すから)
+        # select_related：User＆FriendShipテーブルを合体させる(INNER JOIN)
         return context
 
 

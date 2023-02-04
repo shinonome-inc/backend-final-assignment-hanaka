@@ -1,10 +1,12 @@
-# from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.urls import reverse_lazy
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, DeleteView, DetailView, ListView
 
 from .forms import CreateTweetForm
-from .models import Tweet
+from .models import Like, Tweet
 
 
 class HomeView(LoginRequiredMixin, ListView):
@@ -13,8 +15,20 @@ class HomeView(LoginRequiredMixin, ListView):
     context_object_name = "tweet_list"
     # テンプレートで表示する際のモデルの参照名を設定
     # → どこから持ってきたデータか分かり易くなった気がする
-    queryset = Tweet.objects.select_related("user").order_by("-created_at")
+    # queryset = Tweet.objects.select_related("user").order_by("-created_at")
+    queryset = (
+        Tweet.objects.select_related("user")
+        .prefetch_related("likes")
+        .order_by("-created_at")
+    )
     # created_at を、マイナスを付けることで日付が新しい順にしてる
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context["liked_list"] = user.likes.values_list("tweet", flat=True)
+        # ログイン中のユーザーがいいねしているツイート一覧をidで取得
+        return context
 
 
 class TweetCreateView(LoginRequiredMixin, CreateView):
@@ -34,6 +48,11 @@ class TweetDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "tweet_detail"
     template_name = "tweets/tweet_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["like_count"] = Like.objects.filter(tweet=self.object).count()
+        return context
+
 
 class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Tweet
@@ -44,3 +63,44 @@ class TweetDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         tweet = self.get_object()
         return self.request.user == tweet.user
+
+
+class LikeView(LoginRequiredMixin, View):
+    def post(self, request, **kwargs):
+        user = self.request.user
+        tweet_id = self.kwargs["pk"]
+        tweet = get_object_or_404(Tweet, id=tweet_id)
+        Like.objects.get_or_create(tweet=tweet, user=user)
+        is_liked = True
+        like_url = reverse("tweets:like", kwargs={"pk": tweet_id})
+        unlike_url = reverse("tweets:unlike", kwargs={"pk": tweet_id})
+        like_count = tweet.likes.count()
+        context = {
+            "tweet_id": tweet_id,
+            "is_liked": is_liked,
+            "like_url": like_url,
+            "unlike_url": unlike_url,
+            "like_count": like_count,
+        }
+        return JsonResponse(context)
+
+
+class UnlikeView(LoginRequiredMixin, View):
+    def post(self, request, **kwargs):
+        user = self.request.user
+        tweet_id = self.kwargs["pk"]
+        tweet = get_object_or_404(Tweet, id=tweet_id)
+        if like := Like.objects.filter(user=user, tweet=tweet):
+            like.delete()
+        is_liked = False
+        like_url = reverse("tweets:like", kwargs={"pk": tweet_id})
+        unlike_url = reverse("tweets:unlike", kwargs={"pk": tweet_id})
+        like_count = tweet.likes.count()
+        context = {
+            "tweet_id": tweet_id,
+            "is_liked": is_liked,
+            "like_url": like_url,
+            "unlike_url": unlike_url,
+            "like_count": like_count,
+        }
+        return JsonResponse(context)

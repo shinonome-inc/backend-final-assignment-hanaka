@@ -3,15 +3,32 @@
 {% block title %}ツイート詳細{% endblock %}
 
 {% block content %}
+<div class="row  justify-content-center">
+    <div class="col-8">
+        <div class="card">
+            <div class="card-header">
+                詳細
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    {{ tweet_detail.user }}<br>
+                    &nbsp;&nbsp;{{ tweet_detail.content }}<br>
+                    <br>
+                    いいね {{ like_count }}
+                </p>
+            </div>
+            <div class="card-footer text-muted">
+                <p>{{ tweet_detail.created_at }}</p>
 
-<ul>
-    <li>{{ tweet_detail.user }}</li>
-    <li>{{ tweet_detail.content }}</li>
-    <l1>{{ tweet_detail.created_at }}</li>
-</ul>
+            </div>
+        </div>
+        <div class="mt-3">
+            <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-primary">戻る</a>
+            {% if request.user == tweet_detail.user %}
+            <a href="{% url 'tweets:delete' tweet_detail.pk %}" class="btn btn-outline-danger">削除する</a>
+        </div>
+    </div>
+</div>
 
-<a href="{% url 'tweets:home' %}" class="btn btn-outline-primary">戻る</a>
-{% if request.user == tweet_detail.user %}
-<a href="{% url 'tweets:delete' tweet_detail.pk %}" class="btn btn-outline-primary">削除する</a>
 {% endif %}
 {% endblock %}
