@@ -143,7 +143,9 @@ class FollowerListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         user = get_object_or_404(User, username=self.kwargs["username"])
         # urlで表示している人の情報を持ってくる
-        context["follower_list"] = FriendShip.objects.select_related("follower").filter(
-            following=user
+        context["follower_list"] = (
+            FriendShip.objects.select_related("follower")
+            .filter(following=user)
+            .order_by("-created_at")
         )
         return context
