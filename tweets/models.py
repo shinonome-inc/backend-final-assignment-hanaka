@@ -24,7 +24,13 @@ class Tweet(models.Model):
 
 
 class Like(models.Model):
-    tweet = models.ForeignKey(Tweet, related_name="likes", on_delete=models.CASCADE)
+    tweet = models.ForeignKey("Tweet", related_name="likes", on_delete=models.CASCADE)
+    """
+    ForeignKeyの第一引数は文字列で指定してもモデルクラス自体を指定してもOK。
+    モデル自体で指定するためには、その前で引数に入れるモデルクラスが指定されている必要あり。
+    また、他モデルとの依存関係の明確化＆可読性を考慮して、文字列で指定することが推奨されている◎
+    公式ドキュメント https://docs.djangoproject.com/ja/3.2/ref/models/fields/#django.db.models.ForeignKey
+    """
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="likes", on_delete=models.CASCADE
     )
