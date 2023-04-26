@@ -179,6 +179,8 @@ class TestFavoriteView(TestCase):
         self.assertFalse(Like.objects.exists())
 
     def test_failure_post_with_favorited_tweet(self):
+        Like.objects.create(tweet=self.post, user=self.user1)
+        # ↑がなかったから、ただ単にtest_success_post()と同じことしてるだけだった…。
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
